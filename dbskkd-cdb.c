@@ -58,9 +58,6 @@
 #define SERVER_FOUND '1'
 #define SERVER_NOT_FOUND '4'
 
-#define STDIN (fileno(stdin))
-#define STDOUT (fileno(stdout))
-
 /* these strings must be terminated with space */
 #define VERSION "dbskkd-cdb-3.00 "
 #define DUMMYHOSTNAME "novalue: "
@@ -84,7 +81,7 @@ int main(int argc, char *argv[]) {
   /* command loop */
   while (!ex) {
     /* Read from stdin */
-    length = read(STDIN, &combuf[0], BUFSIZE - 1);
+    length = read(STDIN_FILENO, &combuf[0], BUFSIZE - 1);
     if (length < 0) {
       exit(EX_NOINPUT);
     } else if (length == 0) {
@@ -101,12 +98,12 @@ int main(int argc, char *argv[]) {
       ex = 1;
       break;
     case CLIENT_VERSION:
-      if (write(STDOUT, VERSION, sizeof(VERSION) - 1) < 0) {
+      if (write(STDOUT_FILENO, VERSION, sizeof(VERSION) - 1) < 0) {
         exit(EX_IOERR);
       }
       break;
     case CLIENT_HOST:
-      if (write(STDOUT, DUMMYHOSTNAME, sizeof(DUMMYHOSTNAME) - 1) < 0) {
+      if (write(STDOUT_FILENO, DUMMYHOSTNAME, sizeof(DUMMYHOSTNAME) - 1) < 0) {
         exit(EX_IOERR);
       }
       break;
@@ -138,7 +135,7 @@ int main(int argc, char *argv[]) {
         p += datalen;
         *p = '\n';
         /* sending found code and the result data string with LF */
-        if (write(STDOUT, data, datalen + 2) < 0) {
+        if (write(STDOUT_FILENO, data, datalen + 2) < 0) {
           exit(EX_IOERR);
         }
         break;
@@ -148,7 +145,7 @@ int main(int argc, char *argv[]) {
         *pbuf = '\n';
         /* sending error code and the key string with LF */
         /* this action is required by skkinput */
-        if (write(STDOUT, combuf, keylen + 2) < 0) {
+        if (write(STDOUT_FILENO, combuf, keylen + 2) < 0) {
           exit(EX_IOERR);
         }
         break;
