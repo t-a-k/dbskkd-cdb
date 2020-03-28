@@ -39,6 +39,10 @@
 /* tinycdb required */
 #include "cdb.h"
 
+#ifdef USE_TCPD
+# include <tcpd.h>
+#endif
+
 /* dbskkd dictionary file name */
 /* default value is for FreeBSD port japanese/ddskk */
 #ifndef JISYO_FILE
@@ -69,6 +73,15 @@ int main(int argc, char *argv[]) {
   struct cdb diccdb;
   int dicfd, ex, length;
   unsigned int keylen, datalen;
+
+#ifdef USE_TCPD
+  struct request_info request;
+
+  request_init(&request, RQ_DAEMON, argv[0], RQ_FILE, STDIN_FILENO, 0);
+  fromhost(&request);
+  if (!hosts_access(&request))
+    refuse(&request);
+#endif
 
   /* open dictionary cdb file */
   if ((dicfd = open(JISYO_FILE, O_RDONLY, S_IRUSR)) < 0) {
