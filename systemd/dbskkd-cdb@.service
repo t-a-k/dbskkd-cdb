@@ -1,0 +1,13 @@
+[Unit]
+Description=dbskkd-cdb (SKK dictionary server) service
+Requires=dbskkd-cdb.socket
+
+[Service]
+ExecStart=/usr/local/libexec/dbskkd-cdb
+User=nobody
+Group=nogroup
+StandardInput=socket
+Nice=1
+
+[Install]
+Also=dbskkd-cdb.socket

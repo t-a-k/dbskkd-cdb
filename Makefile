@@ -7,6 +7,7 @@ COMPAT =
 CDBLIB = /usr/local/lib/libcdb.a
 TCPDLIB = -lwrap
 INSTALLDIR = /usr/local/libexec
+SYSTEMDDIR = /etc/systemd/system
 
 CPPFLAGS = $(if $(USE_TCPD),-DUSE_TCPD)
 
@@ -28,5 +29,17 @@ error.o: error.c error.h
 
 install: dbskkd-cdb 
 	cp dbskkd-cdb $(INSTALLDIR); chmod 755 $(INSTALLDIR)/dbskkd-cdb
+
+install-systemd: install-systemd-socket install-systemd-service
+install-systemd-socket:
+	install -c -m644 systemd/dbskkd-cdb.socket $(SYSTEMDDIR)/dbskkd-cdb.socket
+install-systemd-service:
+	if sed 's|^\(ExecStart *= *\).*|\1$(INSTALLDIR)/dbskkd-cdb|' systemd/dbskkd-cdb@.service > $(SYSTEMDDIR)/dbskkd-cdb@.service.$$$$; then \
+		chmod 644 $(SYSTEMDDIR)/dbskkd-cdb@.service.$$$$; \
+		mv -f $(SYSTEMDDIR)/dbskkd-cdb@.service.$$$$ $(SYSTEMDDIR)/dbskkd-cdb@.service; \
+	else \
+		rm -f $(SYSTEMDDIR)/dbskkd-cdb@.service.$$$$; \
+		false; \
+	fi
 
 # end of makefile

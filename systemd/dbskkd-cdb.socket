@@ -1,0 +1,10 @@
+[Unit]
+Description=dbskkd-cdb (SKK dictionary server) incoming socket
+
+[Socket]
+ListenStream=[::1]:1178
+Accept=yes
+MaxConnections=8
+
+[Install]
+WantedBy=sockets.target
