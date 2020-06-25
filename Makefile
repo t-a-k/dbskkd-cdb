@@ -4,7 +4,7 @@
 
 CC = cc -Wall -O2 -g -I/usr/local/include
 COMPAT =
-CDBLIB = /usr/local/lib/libcdb.a
+CDBLIB = -lcdb
 TCPDLIB = -lwrap
 INSTALLDIR = /usr/local/libexec
 SYSTEMDDIR = /etc/systemd/system
